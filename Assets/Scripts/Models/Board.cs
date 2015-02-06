@@ -10,6 +10,9 @@ public class Board : MonoBehaviour {
 
    // Use this for initialization
    void Start () {
+
+   }
+   public void LoadTiles () {
 	 //Create the board table
 	 this.tiles = new Coordinates[height, width];
 	 for (byte r = 0; r < height; r++) {
@@ -18,9 +21,9 @@ public class Board : MonoBehaviour {
 		  Coordinates curTile = Instantiate(tileObject, position, Quaternion.identity) as Coordinates;
 		  curTile.gameObject.transform.parent = this.gameObject.transform;
 		  curTile.SetName(r, c);
-		  
+				
 		  this.tiles [r, c] = curTile;
-//		  Debug.Log(this.tiles [r, c]);
+		  //		  Debug.Log(this.tiles [r, c]);
 	    }
 	 }
    }
