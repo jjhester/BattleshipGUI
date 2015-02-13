@@ -2,24 +2,28 @@
 using System.Collections;
 
 public class SetupController : MonoBehaviour {
-   private Board playerBoard;
+   //Prefabs
+   public Board boardObject;
    public Ship shipObject;
-   public byte shipTotal;
+   
+   public byte boardWidth, boardHeight, shipTotal;
+ 
+   //Private references
    private Ship[] ships;
+   private Board playerBoard;
 
 
 // Use this for initialization
    void Start () {
-	 GameObject boardObject = GameObject.Find("PlayerBoard");
-	 if (boardObject != null) {
-	    playerBoard = boardObject.GetComponent<Board>();
-	    CreateShips();
-	    Debug.Log(playerBoard.transform.childCount);
-	    playerBoard.LoadTiles();
-	    PlaceShips();
-	 } else {
-	    Debug.Log("Cannot find 'PlayerBoard' script");
-	 }
+	 LoadBoard();
+	 CreateShips();
+	 PlaceShips();
+   }
+   private void LoadBoard () {
+	 playerBoard = Instantiate(boardObject, Vector3.zero, Quaternion.identity) as Board;
+	 playerBoard.width = boardWidth;
+	 playerBoard.height = boardHeight;
+	 playerBoard.LoadTiles();
    }
    private void CreateShips () {
 	 ships = new Ship[shipTotal];
