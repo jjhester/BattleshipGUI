@@ -17,10 +17,10 @@ public class Peg : MonoBehaviour {
    private void UpdatePegType () {
 	 switch (type) {
 	    case PegMark.Hit:
-		  this.gameObject.renderer.material.color = Color.red;
+		  this.gameObject.GetComponent<Renderer>().material.color = Color.red;
 		  break;
 	    case PegMark.Miss:
-		  this.gameObject.renderer.material.color = Color.white;
+		  this.gameObject.GetComponent<Renderer>().material.color = Color.white;
 		  break;
 	    default:
 		  break;
@@ -28,7 +28,7 @@ public class Peg : MonoBehaviour {
    }
    //Check for hit or miss
    void OnTriggerEnter ( Collider other ) {
-		Debug.Log(this.name + "-" + other.tag);
+		//Debug.Log(this.name + "-" + other.tag);
 	 switch (other.tag) {
 	    case "Slot":
 		  this.Type = PegMark.Hit;

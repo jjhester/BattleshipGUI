@@ -16,10 +16,10 @@ public class Slot : MonoBehaviour {
    private void UpdateSlotType () {
 	 switch (type) {
 	    case SlotMark.Hit:
-		  this.gameObject.renderer.material.color = Color.red;
+		  this.gameObject.GetComponent<Renderer>().material.color = Color.red;
 		  break;
 	    case SlotMark.None:
-		  this.gameObject.renderer.material.color = Color.white;
+		  this.gameObject.GetComponent<Renderer>().material.color = Color.white;
 		  break;
 	    default:
 		  break;
@@ -27,7 +27,7 @@ public class Slot : MonoBehaviour {
    }
    //Check for ship or peg
    void OnTriggerEnter ( Collider other ) {
-		Debug.Log(this.name + "-" + other.tag);
+		//Debug.Log(this.name + "-" + other.tag);
 		switch (other.tag) {
 			case "Peg":
 				this.Type = SlotMark.Hit;

@@ -12,17 +12,19 @@ public class Tile : MonoBehaviour {
 	    UpdateTileType();
 	 }
    }
+   //For handling clicking on turns
+   private TurnController turn;
 	
    private void UpdateTileType () {
 	 switch (type) {
 	    case TileMark.Occupied:
-		  this.gameObject.renderer.material.color = Color.green;
+		  this.gameObject.GetComponent<Renderer>().material.color = Color.green;
 		  break;
 	    case TileMark.Pegged:
-		  this.gameObject.renderer.material.color = Color.white;
+		  this.gameObject.GetComponent<Renderer>().material.color = Color.white;
 		  break;
 	    case TileMark.Unoccupied:
-		  this.gameObject.renderer.material.color = Color.blue;
+		  this.gameObject.GetComponent<Renderer>().material.color = Color.blue;
 		  break;
 	    default:
 		  break;
@@ -30,7 +32,7 @@ public class Tile : MonoBehaviour {
    }
    //Check for ship or peg
    void OnTriggerEnter ( Collider other ) {
-		Debug.Log(this.name + "-" + other.tag);
+		//Debug.Log(this.name + "-" + other.tag);
 		switch (other.tag) {
 			case "Slot":
 				this.Type = TileMark.Occupied;
@@ -49,10 +51,9 @@ public class Tile : MonoBehaviour {
 
    void Start () {
 		UpdateTileType ();
+		turn = GameObject.FindObjectOfType<TurnController>();
    }
-	
-   // Update is called once per frame
-   void Update () {
-	
-   }
+   void OnMouseDown() {
+		turn.OnTileClick(this as Tile);
+	}
 }

@@ -7,6 +7,7 @@ public class Ship : MonoBehaviour {
    private byte
 	 size, rotation;
    private Coordinates[] slots;
+   private bool isSunk;
    
    public byte Size {
 	 get{ return size;}
@@ -16,13 +17,17 @@ public class Ship : MonoBehaviour {
 		
 	 }
    }
-
+   public bool IsSunk { get { return isSunk; } }
    public byte Rotation {
 	 get{ return rotation;}
 	 set {
 	    rotation = value;
 	    Rotate();
 	 }
+   }
+   public void Sink () {
+	 //Play animation
+	 isSunk = true;
    }
    private void Rotate () {
 	 this.transform.RotateAround(this.transform.position, Vector3.up, rotation);
