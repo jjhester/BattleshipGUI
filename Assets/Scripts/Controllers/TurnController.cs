@@ -11,57 +11,91 @@ public class TurnController : MonoBehaviour {
    public PlayerUI playerUI;
 	
    //Private references
-   private Ship[] ships;
-   private Board playerBoard;
-   private Player[] players;
+   private GameController gameController;
+   private Board currentBoard;
+   private Player currentPlayer;
+   private int shots;
 
  
    //Main switcher
-   public void TakeShot ( string address ) {
-	 players[(int)PlayerType.Client].game.shots.Add(new PlayerShot(address));
-	 DisplayBoard(players[(int)PlayerType.Opponent].game);
-	 DisplayShot(address);
+   public void TakeShot ( string address) {
+	 ShowShotBoard();
+	 PlayerShot currentShot = new PlayerShot(address);
+	 currentPlayer.game.shots.Add(currentShot);
+	 DisplayShot(currentShot);
    }
-	public void PlaceShips () {
-	
+	public void PlaceShip (int index, string startCoords, int rotation) {
+		ShowShipBoard();
+		PlayerShip ship = currentPlayer.game.ships[index];
+		ship.startCoords = startCoords;
+		ship.rotation = rotation;
+		DisplayShip(ship, true);
 	}
-	public void SetPlayers(Player[] players) {
-		this.players = players;
+	public void SetPlayer(Player currentPlayer) {
+		this.currentPlayer = currentPlayer;
+		DisplayHUD();
+		initBoard();
 	}
+
    //Input Methods
 	public void OnTileClick(Tile tile) {
-		TakeShot(tile.name);
-	}	
+		if (shots++ < currentPlayer.game.ShipsAfloat())
+			TakeShot(tile.name);
+		else
+			gameController.EndTurn();
+	}
+
+    //*****Init Methods*****//
+	void Start() {
+		this.gameController = GameObject.FindObjectOfType<GameController>();
+	}
+	private void initBoard() {
+		currentBoard = Instantiate(boardObject, Vector3.zero, Quaternion.identity) as Board;
+		currentBoard.width = (byte) currentPlayer.game.boardSize;
+		currentBoard.height = (byte) currentPlayer.game.boardSize;
+		currentBoard.LoadTiles();
+	}
+
    //*****Display Methods*****//
 
 	public void DisplayHUD() {
-		UpdatePlayerInfo();
+		playerUI.SetPlayerInfo(currentPlayer);
 	}
-	private void UpdatePlayerInfo() {
-		playerUI.SetPlayerInfo(players[(int)PlayerType.Client]);
+	public void ShowShotBoard() {
+		DisplayBoard(currentPlayer, gameController.GetOpponentInfo(), false);
 	}
-   private void DisplayBoard (Game playerGame) {
-	 playerBoard = Instantiate(boardObject, Vector3.zero, Quaternion.identity) as Board;
-	 playerBoard.width = (byte) playerGame.boardSize;
-	 playerBoard.height = (byte) playerGame.boardSize;
-	 playerBoard.LoadTiles();
-   }
-  
+	public void ShowShipBoard() {
+		DisplayBoard(gameController.GetOpponentInfo(), currentPlayer, true);
+	}
+	private void DisplayBoard(Player shotPlayer, Player shipPlayer, bool displayShips) {
+		for (int shot = 0; shot < shotPlayer.game.shots.Count; shot++) {
+			DisplayShot(shotPlayer.game.shots[shot]);
+		}
+		for (int ship = 0; ship < shipPlayer.game.ships.Length; ship++) {
+			DisplayShip(shipPlayer.game.ships[ship], displayShips);
+		}
+	}
+     public void OnShotBoardToggle(bool playerShotBoard) {
+		if (playerShotBoard)
+			ShowShotBoard();
+		else
+			ShowShipBoard();
+	}
    private void DisplayShip ( PlayerShip ship, bool visible ) {
 
 		Transform startTilePos;
-		if((startTilePos = playerBoard.transform.Find(ship.startCoords)) != null) {
+		if((startTilePos = currentBoard.transform.Find(ship.startCoords)) != null) {
 			Ship shipGUI = Instantiate(shipObject, Vector3.zero, Quaternion.identity) as Ship;
 			Debug.Log(startTilePos);
 			shipGUI.Rotation = (byte) ship.rotation;
 			shipGUI.transform.position = startTilePos.position;
-			shipGUI.GetComponent<Renderer>().enabled = visible;
+			//shipGUI.GetComponent<Renderer>().enabled = visible;
 		}
 	}
 	
-   private void DisplayShot(string address) {
+   private void DisplayShot(PlayerShot shot) {
 		Transform tilePos;
-		if((tilePos = playerBoard.transform.Find(address)) != null) {
+		if((tilePos = currentBoard.transform.Find(shot.coords)) != null) {
 			Debug.Log("Shot -" + tilePos);
 			Peg curPeg = Instantiate(pegObject, Vector3.zero, Quaternion.identity) as Peg;
 			curPeg.transform.position = tilePos.position;

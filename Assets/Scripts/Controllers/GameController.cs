@@ -4,6 +4,7 @@ using System.Collections;
 public class GameController : MonoBehaviour {
    private TurnController turn;
    private Player[] players;
+   private int activePlayer;
 
    // Use this for initialization
    void Start () {
@@ -12,6 +13,8 @@ public class GameController : MonoBehaviour {
 	 turn.DisplayHUD();
 	 turn.TakeShot("A1");
 	 turn.TakeShot("I8");
+	 //Testing only
+	 Debug.Log(TurnSerializer.Serialize(players [0].game));
    }
    void InitGame () {
 	 //Set turn controller
@@ -31,7 +34,14 @@ public class GameController : MonoBehaviour {
 	 for (int p = 0; p < 2; p++) {
 	    players [p] = new Player(PlayerPrefs.GetString("Player " + (p + 1) + " Name"), game);
 	 }
-	 turn.SetPlayers(players);
+	 activePlayer = 0;
+	 StartTurn();
+   }
+   void StartTurn () {
+	 turn.SetPlayer(players [activePlayer]);
+   }
+   public void EndTurn () {
+
    }
    void PlaceShips () {
 
@@ -43,8 +53,9 @@ public class GameController : MonoBehaviour {
 //	    return null;
 //	 }
 //   }
-
-	
+   public Player GetOpponentInfo () {
+	 return players [(activePlayer == 0) ? 1 : 0];
+   }
    // Update is called once per frame
    void Update () {
 	

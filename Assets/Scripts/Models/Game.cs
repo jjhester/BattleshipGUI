@@ -16,4 +16,11 @@ public class Game {
 		this.ships = ships;
 		this.shots = shots;
 	}
+	public int ShipsAfloat() {
+		int afloat = 0;
+		foreach (var s in ships) {
+			if (!s.isSunk) afloat++;
+		}
+		return afloat;
+	}
 }
